@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .goodsDetail{
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            background-color: #888888;
+        }
+    </style>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+<div class="row goodsDetail">
+
+</div>
+</div>
+<script>
+    $(function(){
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+
+        //接收URL中的参数booksId
+        var id = getUrlParam('Id');
+        console.log('goodsId:'+id);
+
+        $.ajax({
+            type:'get',
+            url:'goods.json',
+            dataType:'json',
+            success:function(res,status){
+                console.log(status)
+                $.each(res.goods, function(idx,val) {
+                    //根据id获取详情数据
+                    if(id == val.id){
+                        var str = "<img src='"+val.img+"'/><p>出版编号："+val.id+"</p><p>出版社："+val.publish+"</p><p>页数："+val.num+"</p><p>简介："+val.desc+"</p>";
+                        console.log('index:'+idx);
+                    }
+                    $('.goodsDetail').append(str);
+                });
+            }
+        })
+    })
+</script>
+</body>
+</html>

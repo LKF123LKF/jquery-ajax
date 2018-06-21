@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .thumbnail {
+            max-height: 350px;
+            height: 330px;
+            overflow: hidden;
+        }
+
+        .image {
+            width: 140px;
+            height: 140px !important;
+        }
+    </style>
+    <link rel="stylesheet" href="../json/bootstrap.min.css">
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row hotgoodslist">
+        <div class="page-header">
+            <h1>热销商品
+                <small>年度热销商品排行榜</small>
+            </h1>
+        </div>
+        //先设计好大概模板
+        <!--<div class="col-sm-4 col-md-3">
+            <div class="thumbnail">
+                <img src="..." alt="...">
+                <div class="caption">
+                    <h3>￥<span>400</span></h3>
+                    <p>商品名称</p>
+                    <p>
+                        <a href="#" class="btn btn-danger" role="button">加入购物车</a>
+                        <a href="#" class="btn btn-primary" role="button">立即购买</a>
+                    </p>
+                </div>
+            </div>
+        </div>-->
+    </div>
+    <button class="btn btn-default " id="sort">根据从小到大排序</button>
+    <button class="btn btn-default " id="sort-dec">根据从大到小排序</button>
+    <div class="box">
+        <div class="row shirt">
+            <div class="page-header">
+                <h1>衬衫
+                    <small>众多品牌齐聚，商务休闲首选</small>
+                </h1>
+            </div>
+        </div>
+        <div class="row shirt-sort">
+            <div class="page-header">
+                <h1>衬衫
+                    <small>众多品牌齐聚，商务休闲首选</small>
+                </h1>
+            </div>
+
+        </div>
+        <div class="row shirt-sort-dec">
+            <div class="page-header">
+                <h1>衬衫
+                    <small>众多品牌齐聚，商务休闲首选</small>
+                </h1>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(".shirt-sort-dec").hide();
+    $(".shirt-sort").hide();
+    $("#sort").click(function () {
+        $(".shirt").remove();
+        $(".shirt-sort-dec").remove();
+        $(".shirt-sort").show();
+        //todo:使用ES6字符串模板创建新的DOM节点
+        var str = `<div class="row shirt-sort">
+        <div class="page-header">
+            <h1>衬衫<small>众多品牌齐聚，商务休闲首选</small></h1>
+        </div>
+
+    </div>`
+
+        $(".box").append(str);
+
+        $.ajax({
+            url: "http://datainfo.duapp.com/shopdata/getGoods.php?callback=?",
+            type: "get",
+            data: {
+                classID: 1
+
+            },
+            dataType: "jsonp",
+            success: function (resp) {
+                resp.sort(function (a, b) {
+                    return Number(a.price) > Number(b.price);
+                })
+                console.log(resp);
+                for (var i = 0; i < resp.length; i++) {
+                    // DOM操作添加商品
+                    var $goodsBox = $("<div>").addClass("col-md-3").addClass("col-sm-4");
+                    var $thumbnail = $("<div>").addClass("thumbnail");
+                    var $img = $("<img>").addClass("image").attr("src", resp[i].goodsListImg);
+                    var $caption = $("<div>").addClass("caption");
+
+                    var $priceSpan = $("<span>").text(resp[i].price);
+                    var $price = $("<h3>").append($priceSpan);
+
+                    var $name = $("<p>").text(resp[i].goodsName);
+                    var $id = $("<p>").text(resp[i].goodsID).css("visible", "hidden");
+
+                    $caption.append($price);
+                    $caption.append($name);
+                    $caption.append($id);
+
+                    $thumbnail.append($img);
+                    $thumbnail.append($caption);
+
+                    $goodsBox.append($thumbnail)
+                    $(".shirt-sort").append($goodsBox);
+                }
+            }
+        });
+        //todo:点击后变为不可再点击状态
+        $(this).attr("disabled", "disabled");
+        //todo:要想变为可选状态使用 $(this).removeAttr("disabled");
+        // $(this).removeAttr("disabled");
+        $("#sort-dec").removeAttr("disabled");
+    })
+    $("#sort-dec").click(function () {
+        $(".shirt").remove();
+        $(".shirt-sort").remove()
+        $(".shirt-sort-dec").show();
+        //todo:使用字符串模板创建新的DOM节点
+        var str = `<div class="row shirt-sort-dec">
+        <div class="page-header">
+            <h1>衬衫<small>众多品牌齐聚，商务休闲首选</small></h1>
+        </div>
+</div>`
+        $(".box").append(str);
+        $.ajax({
+            url: "http://datainfo.duapp.com/shopdata/getGoods.php?callback=?",
+            type: "get",
+            data: {
+                classID: 1
+
+            },
+            dataType: "jsonp",
+            success: function (resp) {
+                resp.sort(function (a, b) {
+                    return Number(a.price) < Number(b.price);
+                })
+                console.log(resp);
+                for (var i = 0; i < resp.length; i++) {
+                    // DOM操作添加商品
+                    var $goodsBox = $("<div>").addClass("col-md-3").addClass("col-sm-4");
+                    var $thumbnail = $("<div>").addClass("thumbnail");
+                    var $img = $("<img>").addClass("image").attr("src", resp[i].goodsListImg);
+                    var $caption = $("<div>").addClass("caption");
+
+                    var $priceSpan = $("<span>").text(resp[i].price);
+                    var $price = $("<h3>").append($priceSpan);
+
+                    var $name = $("<p>").text(resp[i].goodsName);
+                    var $id = $("<p>").text(resp[i].goodsID).css("visible", "hidden");
+
+                    $caption.append($price);
+                    $caption.append($name);
+                    $caption.append($id);
+
+                    $thumbnail.append($img);
+                    $thumbnail.append($caption);
+
+                    $goodsBox.append($thumbnail)
+                    $(".shirt-sort-dec").append($goodsBox);
+                }
+            }
+        });
+        //todo:点击后变为不可再点击状态
+        $(this).attr("disabled", "disabled");
+        //todo:要想变为可选状态使用 $(this).removeAttr("disabled");
+        // $(this).removeAttr("disabled");
+        $("#sort").removeAttr("disabled");
+    })
+    $(function () {
+        /* 加载热销商品列表页*/
+        $.ajax({
+            type: "get",
+            url: "goods.json",
+            dataType: "json",
+            success: function (res) {
+                console.log(res);
+                var resp = res.data;
+                console.log(resp);
+                resp.sort(function (good1, good2) {
+                    /* 用价格排序由小到大 */
+                    // return good1.price > good2.price;
+                    //todo:json中price是字符串，字符串比较时“79.9”是等于“799”的，所以要转换类型
+                    return Number(good1.price) > Number(good2.price);
+                });
+
+                for (var i = 0; i < resp.length; i++) {
+                    // DOM操作添加商品
+                    var $goodsBox = $("<div>").addClass("col-md-3").addClass("col-sm-4");
+                    var $thumbnail = $("<div>").addClass("thumbnail");
+                    var $img = $("<img>").addClass("image").attr("src", resp[i].goodsListImg);
+                    var $caption = $("<div>").addClass("caption");
+                    var $priceSpan = $("<span>").text(resp[i].price);
+                    var $price = $("<h3>").text("￥").append($priceSpan);
+                    var $name = $("<p>").text(resp[i].goodsName);
+                    var $id = $("<p>").text(resp[i].goodsID).css("visible", "hidden");
+                    var $addCart = $("<button>").addClass("btn").addClass("btn-danger").text("加入购物车");
+                    var $buyNow = $("<button>").addClass("btn").addClass("btn-primary").text("立即购买");
+                    $caption.append($price);
+                    $caption.append($name);
+                    $caption.append($id);
+                    $thumbnail.append($img);
+                    $thumbnail.append($caption);
+                    $thumbnail.append($addCart);
+                    $thumbnail.append($buyNow);
+                    $goodsBox.append($thumbnail)
+                    $(".hotgoodslist").append($goodsBox);
+                }
+            }
+        });
+
+        /*
+         加载衬衫商品列表页
+         */
+        $.ajax({
+            url: "http://datainfo.duapp.com/shopdata/getGoods.php?callback=?",
+            type: "get",
+            data: {
+                classID: 1
+
+            },
+            dataType: "jsonp",
+            success: function (resp) {
+                console.log(resp);
+                for (var i = 0; i < resp.length; i++) {
+                    // DOM操作添加商品
+                    var $goodsBox = $("<div>").addClass("col-md-3").addClass("col-sm-4");
+                    var $thumbnail = $("<div>").addClass("thumbnail");
+                    var $img = $("<img>").addClass("image").attr("src", resp[i].goodsListImg);
+                    var $caption = $("<div>").addClass("caption");
+
+                    var $priceSpan = $("<span>").text(resp[i].price);
+                    var $price = $("<h3>").append($priceSpan);
+
+                    var $name = $("<p>").text(resp[i].goodsName);
+                    var $id = $("<p>").text(resp[i].goodsID).css("visible", "hidden");
+
+                    $caption.append($price);
+                    $caption.append($name);
+                    $caption.append($id);
+
+                    $thumbnail.append($img);
+                    $thumbnail.append($caption);
+
+                    $goodsBox.append($thumbnail)
+                    $(".shirt").append($goodsBox);
+                }
+            }
+        });
+    })
+
+</script>
+</body>
+</html>

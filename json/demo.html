@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax json</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <style type="text/css">
+        ul li{
+           list-style: none;
+        }
+        img{
+            width: 200px;
+            height: 200px;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div class="goodlist">
+        
+    </div>
+
+</div>
+<script >
+    $(function () {
+        $.ajax({
+            type:"get",
+            url:"goods.json",
+            dataType:"json",
+            success:function (res) {
+                var str = "<ul class='row'>";
+                $.each(res.goods,function (idx,val) {
+                    str +="<li class='col-md-3'><a href='detail.html?Id="+val.id+"'class='lp_li_a'><div class='lp_li_imgWrap'><img src='"+val.img+"'/></div><p class='lp_li_name'>"
+                        +val.title+"</p><p class='lp_li_price'>"
+                        +'￥'+val.price+"</p></a></li>";
+                });
+                str += "</ul>";
+                $('.goodlist').append(str);
+            }
+        });
+    })
+</script>
+</body>
+</html>

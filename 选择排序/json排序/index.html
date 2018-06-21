@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script>
+        $.ajax({
+            url: 'data.json',//获取本地json数据，在同文件夹下
+            type: "get",
+            success: function(resp) {
+                console.log(resp); //原始数据
+                var data = resp;
+                //原生javascript sort() 方法
+                data.data.sort(function(good1, good2) {
+                    /* 用价格排序由小到大 */
+                    return good1.price1 > good2.price1;
+                });
+                console.log(data.data);//排序后的数据
+            },
+            error: function(resp) {
+                alert("系统繁忙，请稍后再试...");
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
